@@ -1,0 +1,12 @@
+{
+  "data" : [
+    {
+      "idiom" : "universal",
+      "universal-type-identifier" : "csv"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
