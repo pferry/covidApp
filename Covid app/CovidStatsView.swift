@@ -10,12 +10,9 @@ import SwiftUI
 
 extension AnyTransition {
     static var moveAndFade: AnyTransition {
-        let insertion = AnyTransition.move(edge: .trailing)
+        return AnyTransition.move(edge: .leading)
             .combined(with: .opacity)
-        let removal = AnyTransition.scale
-            .combined(with: .opacity)
-        return .asymmetric(insertion: insertion, removal: removal)
-    }
+         }
 }
 
 struct CovidStatsView: View {
@@ -31,17 +28,21 @@ struct CovidStatsView: View {
                     VStack {
                         StatPanel(title: "Metric1", metric: 23, evolution: 12)
                             .padding(.top, 12)
-                        StatPanel(title: "Metric2", metric: 32, evolution: 10)
+                        StatPanel(title: "Metric2", metric: 32, evolution: -10)
                         StatPanel(title: "Metric3", metric: 12, evolution: 8)
                     
                     }.frame(maxWidth: .infinity)
                 }
                 .background(Color(red: 0.87059, green: 0.87059, blue: 0.87059, opacity: 1)) //backgroundGray
                 
-            }
+            }.zIndex(0)
         if showMenu {
-            NavigationMenuView()
+            Rectangle()
+                .fill(Color(red: 0, green: 0, blue: 0, opacity: 0.12))
+                .zIndex(1)
+            NavigationMenuView(showMenu: $showMenu)
                 .transition(.moveAndFade)
+                .zIndex(2)
            }
         }
     }
@@ -84,7 +85,9 @@ struct StatPanel: View {
                     .padding(.leading, 8)
                     .font(Font.custom("roboto", size: 20))
                 HStack(alignment: .center){
-                    Text("- \(evolution)%")
+                    Circle()
+                        .fill(evolution < 0 ? Color.green : Color.red)
+                    Text("\(evolution)%")
                         .font(Font.custom("roboto-bold", size: 28))
                 }.frame(width: 258)
                 Spacer()
@@ -118,7 +121,7 @@ struct Menu: View {
                         Rectangle()
                             .frame(width: 18, height: 2, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                         Rectangle()
-                            .frame(width: 18, height: 2, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                            .frame(width: 18, height: 2, alignment: .center)
                         Rectangle()
                             .frame(width: 18, height: 2, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
                     }

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct NavigationMenuView: View {
+    @Binding var showMenu: Bool
+    
     var body: some View {
         GeometryReader { geometry in
             HStack (spacing: 0){
@@ -18,16 +20,22 @@ struct NavigationMenuView: View {
                     //Menu page
                     VStack(alignment: .leading, spacing: 16) {
                         //Cross
-                        ZStack{
-                        Rectangle()
-                            .rotation(Angle(degrees: 45))
-                            .frame(width: 16, height: 2, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                        Rectangle()
-                            .rotation(Angle(degrees: -45))
-                            .frame(width: 16, height: 2, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                        Button(action: {
+                                            withAnimation {
+                                                showMenu.toggle()
+                                            }
+                        }){
+                            ZStack{
+                            Rectangle()
+                                .rotation(Angle(degrees: 45))
+                                .frame(width: 16, height: 2, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                            Rectangle()
+                                .rotation(Angle(degrees: -45))
+                                .frame(width: 16, height: 2, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                            }
+                                .frame(width: 20, height: 20, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                                .padding(16)
                         }
-                            .frame(width: 20, height: 20, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                            .padding(16)
                         //Page list
                         VStack(alignment: .leading, spacing: 16){
                             Text("Covid Stats").font(Font.custom("roboto", size: 20))
@@ -42,7 +50,7 @@ struct NavigationMenuView: View {
                     //Shadow overlay
                 }
                 Rectangle()
-                    .fill(Color(red: 0, green: 0, blue: 0, opacity: 0.12))
+                    .fill(Color(red: 0, green: 0, blue: 0, opacity: 0.0))
                     .frame(maxWidth: geometry.size.width * 0.20)
             }
         }
@@ -50,7 +58,8 @@ struct NavigationMenuView: View {
 }
 
 struct NavigationMenuView_Previews: PreviewProvider {
+    
     static var previews: some View {
-        NavigationMenuView()
+        NavigationMenuView(showMenu: .constant(true))
     }
 }
