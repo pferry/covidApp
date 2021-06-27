@@ -17,33 +17,27 @@ extension AnyTransition {
 
 struct CovidStatsView: View {
     
-    @State private var showMenu = false
+    @Binding var showMenu : Bool
     
     var body: some View {
+        
         ZStack{
-            VStack(alignment: .center, spacing: 0) {
-                Menu(title: "Covid Stats", showMenu: $showMenu)
-                
-                ScrollView {
-                    VStack {
-                        StatPanel(title: "Metric1", metric: 23, evolution: 12)
-                            .padding(.top, 12)
-                        StatPanel(title: "Metric2", metric: 32, evolution: -10)
-                        StatPanel(title: "Metric3", metric: 12, evolution: 8)
+            GeometryReader { geometry in
+                VStack(alignment: .center, spacing: 0) {
+                    Menu(title: "Covid Stats", showMenu: $showMenu)
+                    ScrollView {
+                        VStack {
+                            StatPanel(title: "Metric1", metric: 23, evolution: 12)
+                                .padding(.top, 12)
+                            StatPanel(title: "Metric2", metric: 32, evolution: -10)
+                            StatPanel(title: "Metric3", metric: 12, evolution: 8)
+                        
+                        }.frame(maxWidth: .infinity,minHeight: geometry.size.height - 50)
+                    }
+                    .background(Color(red: 0.87059, green: 0.87059, blue: 0.87059, opacity: 1)) //backgroundGray
                     
-                    }.frame(maxWidth: .infinity)
-                }
-                .background(Color(red: 0.87059, green: 0.87059, blue: 0.87059, opacity: 1)) //backgroundGray
-                
-            }.zIndex(0)
-        if showMenu {
-            Rectangle()
-                .fill(Color(red: 0, green: 0, blue: 0, opacity: 0.12))
-                .zIndex(1)
-            NavigationMenuView(showMenu: $showMenu)
-                .transition(.moveAndFade)
-                .zIndex(2)
-           }
+                }.edgesIgnoringSafeArea(.bottom)
+            }
         }
     }
 }
@@ -85,10 +79,13 @@ struct StatPanel: View {
                     .padding(.leading, 8)
                     .font(Font.custom("roboto", size: 20))
                 HStack(alignment: .center){
+                    Spacer()
                     Circle()
                         .fill(evolution < 0 ? Color.green : Color.red)
+                        .frame(width: 28, height: 28)
                     Text("\(evolution)%")
                         .font(Font.custom("roboto-bold", size: 28))
+                    Spacer()
                 }.frame(width: 258)
                 Spacer()
             }
@@ -98,49 +95,9 @@ struct StatPanel: View {
 }
 
 
-struct Menu: View {
-    var title: String
-    @Binding var showMenu: Bool
-    
-    var body: some View {
-        ZStack(alignment: Alignment(horizontal: .leading, vertical: .center))
-        {
-            Rectangle()
-                .fill(Color(red: 0.32157, green: 0.47451, blue: 0.89412, opacity: 1)) //Menu Blue
-                .frame(height: 50)
-            
-            
-            HStack {
-                Button(action: {
-                                    withAnimation {
-                                        showMenu.toggle()
-                                    }
-                }) {
-                    
-                    VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, spacing: 3) {
-                        Rectangle()
-                            .frame(width: 18, height: 2, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                        Rectangle()
-                            .frame(width: 18, height: 2, alignment: .center)
-                        Rectangle()
-                            .frame(width: 18, height: 2, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
-                    }
-                }
-                    .padding(12)
-                    .foregroundColor(.white)
-                Text(title)
-                    .font(Font.custom("roboto-bold", size: 20))
-                    .foregroundColor(.white)
-            }
-        }
-    }
-}
-
-
-
 struct CovidStatsView_Previews: PreviewProvider {
     static var previews: some View {
-        CovidStatsView()
+        CovidStatsView(showMenu: .constant(false))
         //StatPanel(title: "Toto", metric: 23, evolution: 12)
     }
 }

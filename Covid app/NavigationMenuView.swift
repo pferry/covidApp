@@ -7,8 +7,47 @@
 
 import SwiftUI
 
+struct Menu: View {
+    var title: String
+    @Binding var showMenu: Bool
+    
+    var body: some View {
+        ZStack(alignment: Alignment(horizontal: .leading, vertical: .center))
+        {
+            Rectangle()
+                .fill(Color(red: 0.32157, green: 0.47451, blue: 0.89412, opacity: 1)) //Menu Blue
+                .frame(height: 50)
+            
+            
+            HStack {
+                Button(action: {
+                                    withAnimation {
+                                        showMenu.toggle()
+                                    }
+                }) {
+                    
+                    VStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, spacing: 3) {
+                        Rectangle()
+                            .frame(width: 18, height: 2, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                        Rectangle()
+                            .frame(width: 18, height: 2, alignment: .center)
+                        Rectangle()
+                            .frame(width: 18, height: 2, alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/)
+                    }
+                }
+                    .padding(12)
+                    .foregroundColor(.white)
+                Text(title)
+                    .font(Font.custom("roboto-bold", size: 20))
+                    .foregroundColor(.white)
+            }
+        }
+    }
+}
+
 struct NavigationMenuView: View {
     @Binding var showMenu: Bool
+    @Binding var activeView: String
     
     var body: some View {
         GeometryReader { geometry in
@@ -38,8 +77,24 @@ struct NavigationMenuView: View {
                         }
                         //Page list
                         VStack(alignment: .leading, spacing: 16){
-                            Text("Covid Stats").font(Font.custom("roboto", size: 20))
-                            Text("About").font(Font.custom("roboto", size: 20))
+                            
+                            Button(action: {
+                                                withAnimation {
+                                                    activeView = "CovidStats"
+                                                    showMenu.toggle()
+                                                }
+                            }){
+                                Text("Covid Stats").font(Font.custom("roboto", size: 20))
+                            }
+                            
+                            Button(action: {
+                                                withAnimation {
+                                                    activeView = "About"
+                                                    showMenu.toggle()
+                                                }
+                            }){
+                                Text("About").font(Font.custom("roboto", size: 20))
+                            }
                         }
                             .padding(32)
                         
@@ -60,6 +115,6 @@ struct NavigationMenuView: View {
 struct NavigationMenuView_Previews: PreviewProvider {
     
     static var previews: some View {
-        NavigationMenuView(showMenu: .constant(true))
+        NavigationMenuView(showMenu: .constant(true),activeView: .constant("CovidStats"))
     }
 }
