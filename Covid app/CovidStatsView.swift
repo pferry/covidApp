@@ -18,6 +18,12 @@ extension AnyTransition {
 struct CovidStatsView: View {
     
     @Binding var showMenu : Bool
+    @ObservedObject var displayData : displayData
+
+    @State var day = Date().dayBefore
+    
+    let urlString = "https://coronavirusapi-france.vercel.app/AllDataByDate?date=2021-03-15"
+    
     
     var body: some View {
         
@@ -25,17 +31,19 @@ struct CovidStatsView: View {
             GeometryReader { geometry in
                 VStack(alignment: .center, spacing: 0) {
                     Menu(title: "Covid Stats", showMenu: $showMenu)
-                    ScrollView {
-                        VStack {
-                            StatPanel(title: "Metric1", metric: 23, evolution: 12)
-                                .padding(.top, 12)
-                            StatPanel(title: "Metric2", metric: 32, evolution: -10)
-                            StatPanel(title: "Metric3", metric: 12, evolution: 8)
-                        
-                        }.frame(maxWidth: .infinity,minHeight: geometry.size.height - 50)
+                    ZStack (alignment: Alignment(horizontal: .center, vertical: .bottom)) {
+                        ScrollView {
+                            VStack {
+                                StatPanel(title: "Hospitalisés", metric: $displayData.today.hospitalises, lastWeek: $displayData.sevenDay.hospitalises)
+                                    .padding(.top, 12)
+                                StatPanel(title: "Réanimation", metric: $displayData.today.reanimation, lastWeek: $displayData.sevenDay.reanimation)
+                                StatPanel(title: "Entrées hospitalisation", metric: $displayData.today.nouvellesHospitalisations, lastWeek: $displayData.sevenDay.nouvellesHospitalisations)
+                                StatPanel(title: "Entrées réanimation", metric: $displayData.today.nouvellesReanimations, lastWeek: $displayData.sevenDay.nouvellesReanimations)
+                            
+                            }.frame(maxWidth: .infinity,minHeight: geometry.size.height - 50)
+                        }.background(Color(red: 0.87059, green: 0.87059, blue: 0.87059, opacity: 1)) //backgroundGray
+                        DatePicker()
                     }
-                    .background(Color(red: 0.87059, green: 0.87059, blue: 0.87059, opacity: 1)) //backgroundGray
-                    
                 }.edgesIgnoringSafeArea(.bottom)
             }
         }
@@ -43,12 +51,35 @@ struct CovidStatsView: View {
 }
 
 
+struct DatePicker: View {
+    @State private var day = Date().dayBefore
+    let dateFormatter = DateFormatter()
+    
+    init(){
+        dateFormatter.dateFormat = "dd/MM/YYYY"
+    }
+    
+
+    var body: some View{
+        ZStack{
+            Rectangle()
+                .fill(Color(red: 0.97647, green: 0.81569, blue: 0.57647, opacity: 1)) //backgroundGray
+                .frame(maxHeight: 44)
+            HStack{
+                Image("Arrow")
+                Text("\(dateFormatter.string(from: Date().dayBefore))")
+                    .font(Font.custom("roboto", size: 20))
+                Image("Arrow")
+            }
+        }
+    }
+}
 
 
 struct StatPanel: View {
     var title: String
-    var metric: NSInteger
-    var evolution: NSInteger
+    @Binding var metric: NSInteger
+    @Binding var lastWeek: NSInteger
     
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .leading, vertical: .top))
@@ -81,9 +112,9 @@ struct StatPanel: View {
                 HStack(alignment: .center){
                     Spacer()
                     Circle()
-                        .fill(evolution < 0 ? Color.green : Color.red)
+                        .fill(evolution(today: metric, sevenDays: lastWeek) <= 0 ? Color.green : Color.red)
                         .frame(width: 28, height: 28)
-                    Text("\(evolution)%")
+                    Text("\(evolution(today: metric, sevenDays: lastWeek))%")
                         .font(Font.custom("roboto-bold", size: 28))
                     Spacer()
                 }.frame(width: 258)
@@ -92,12 +123,26 @@ struct StatPanel: View {
         }.frame(width: 258, height: 192)
         .padding(12)
     }
-}
+    
+    func evolution (today: Int, sevenDays: Int) -> Int{
+        print("metric : \(today) evolution: \(sevenDays)")
+        if sevenDays == 0 {
+            return 0
+        } else {
+            print("compute : \((today - sevenDays) / sevenDays * 100)")
+            return Int(Double(today - sevenDays) / Double(sevenDays) * 100)
+        }
+    }
+ }
+    
 
 
 struct CovidStatsView_Previews: PreviewProvider {
     static var previews: some View {
-        CovidStatsView(showMenu: .constant(false))
+        CovidStatsView(showMenu: .constant(false), displayData: displayData(), day: Date().dayBefore)
         //StatPanel(title: "Toto", metric: 23, evolution: 12)
     }
 }
+
+
+

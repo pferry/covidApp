@@ -14,7 +14,7 @@ struct AboutView: View {
         GeometryReader { geometry in
             ZStack{
                 VStack(alignment: .center, spacing: 0) {
-                    Menu(title: "Covid Stats", showMenu: $showMenu)
+                    Menu(title: "About", showMenu: $showMenu)
                     ZStack (alignment: Alignment(horizontal: .center, vertical: .top))
                     {
                     Text("This is my about view")
