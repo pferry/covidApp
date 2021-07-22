@@ -39,10 +39,13 @@ struct CovidStatsView: View {
                                 StatPanel(title: "Réanimation", metric: $displayData.today.reanimation, lastWeek: $displayData.sevenDay.reanimation)
                                 StatPanel(title: "Entrées hospitalisation", metric: $displayData.today.nouvellesHospitalisations, lastWeek: $displayData.sevenDay.nouvellesHospitalisations)
                                 StatPanel(title: "Entrées réanimation", metric: $displayData.today.nouvellesReanimations, lastWeek: $displayData.sevenDay.nouvellesReanimations)
+								Rectangle()
+									.fill(Color.white.opacity(0.0))
+									.frame(minHeight:50)
                             
-                            }.frame(maxWidth: .infinity,minHeight: geometry.size.height - 50)
+                            }.frame(maxWidth: .infinity,minHeight: geometry.size.height)
                         }.background(Color(red: 0.87059, green: 0.87059, blue: 0.87059, opacity: 1)) //backgroundGray
-                        DatePicker()
+                        DatePicker(displayData: displayData)
                     }
                 }.edgesIgnoringSafeArea(.bottom)
             }
@@ -53,10 +56,13 @@ struct CovidStatsView: View {
 
 struct DatePicker: View {
     @State private var day = Date().dayBefore
-    let dateFormatter = DateFormatter()
+	@ObservedObject var displayData : displayData
+	
+	let dateFormatter = DateFormatter()
     
-    init(){
+    init(displayData : displayData){
         dateFormatter.dateFormat = "dd/MM/YYYY"
+		self.displayData = displayData
     }
     
 
@@ -66,10 +72,45 @@ struct DatePicker: View {
                 .fill(Color(red: 0.97647, green: 0.81569, blue: 0.57647, opacity: 1)) //backgroundGray
                 .frame(maxHeight: 44)
             HStack{
-                Image("Arrow")
-                Text("\(dateFormatter.string(from: Date().dayBefore))")
+                ZStack{
+					Button(action: {
+										withAnimation {
+											day = day.dayBefore
+											do {
+												try fetchData(displayData: displayData, day: day)
+											}
+											catch {
+												print("An error occured while fetching data")
+											}
+										}
+					}){
+					
+					Rectangle()
+                        .fill(Color(red: 0, green: 0, blue: 0, opacity: 0)) //backgroundGray
+                        .frame(maxWidth: 62, maxHeight: 44)
+					}
+					Image("Arrow").rotationEffect(.degrees(180))
+                }
+                Text("\(dateFormatter.string(from: day))")
                     .font(Font.custom("roboto", size: 20))
-                Image("Arrow")
+                ZStack{
+					Button(action: {
+										withAnimation {
+											day = day.dayAfter
+											do {
+												try fetchData(displayData: displayData, day: day)
+											}
+											catch {
+												print("An error occured while fetching data")
+											}
+										}
+					}){
+                    Rectangle()
+                        .fill(Color(red: 0, green: 0, blue: 0, opacity: 0)) //backgroundGray
+                        .frame(maxWidth: 62, maxHeight: 44)
+					}
+                    Image("Arrow")
+                }
             }
         }
     }

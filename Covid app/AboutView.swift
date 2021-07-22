@@ -17,7 +17,7 @@ struct AboutView: View {
                     Menu(title: "About", showMenu: $showMenu)
                     ZStack (alignment: Alignment(horizontal: .center, vertical: .top))
                     {
-                    Text("This is my about view")
+                    Text("Built by Pierre Ferry to see how SwiftUI works !")
                     }.frame(minWidth: geometry.size.width, minHeight: geometry.size.height)
                     .background(Color(red: 0.87059, green: 0.87059, blue: 0.87059, opacity: 1)) //backgroundGray
                     

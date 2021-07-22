@@ -27,7 +27,7 @@ struct Covid_appApp: App {
     */
     init() {
         do {
-            try fetchData(day: Date().dayBefore)
+			try fetchData(displayData: appData, day: Date().dayBefore)
         }
         catch {
             print("An error occured while fetching data")
@@ -58,7 +58,7 @@ struct Covid_appApp: App {
     
     
     
-    func fetchData(day: Date) throws {
+  /*  func fetchData(day: Date) throws {
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "YYYY-MM-dd"
@@ -140,5 +140,5 @@ struct Covid_appApp: App {
                 }
             }
         }.resume()
-    }
+    }*/
 }
